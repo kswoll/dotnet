@@ -267,7 +267,24 @@ namespace StackExchange.Profiling
             Children.Add(timing);
             timing.ParentTiming = this;
             timing.ParentTimingId = Id;
+            timing.Profiler = Profiler;
             timing.MiniProfilerId = Profiler.Id;
+
+            if (timing.Children != null)
+                UpdateChildren(timing);
+        }
+
+        private void UpdateChildren(Timing timing)
+        {
+            foreach (var child in timing.Children)
+            {
+                child.ParentTiming = timing;
+                child.ParentTimingId = timing.Id;
+                child.Profiler = Profiler;
+                child.MiniProfilerId = Profiler.Id;
+                if (child.Children != null)
+                    UpdateChildren(child);
+            }
         }
 
         internal void RemoveChild(Timing timing)
